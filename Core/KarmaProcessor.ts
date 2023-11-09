@@ -2,6 +2,7 @@ import { IKarmaRepository } from "./IKarmaRepository";
 import JsonKarmaRepositry from "./JsonKarmaRepository";
 import KarmaParser from "./KarmaParser";
 import { KarmaProcessorResponse } from "./Models/KarmaProcessorResponse";
+import S3KarmaRepository from "./S3KarmaRepository";
 
 class KarmaProcessor {
     private readonly _incrementParser : KarmaParser;
@@ -10,7 +11,7 @@ class KarmaProcessor {
     constructor() {
         this._incrementParser = new KarmaParser("++");
         this._decrementParser = new KarmaParser("--");
-        this._repository = new JsonKarmaRepositry();
+        this._repository = S3KarmaRepository;
     }
 
     processMessageAsync = async (message: string) : Promise<KarmaProcessorResponse> => {
