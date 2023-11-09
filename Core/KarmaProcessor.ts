@@ -23,13 +23,13 @@ class KarmaProcessor {
             let karma = await this._repository.getKarma(increment);
             karma.karma++;
             await this._repository.setKarma(increment, karma);
-            messages.push(`${increment} is now at ${karma.karma} karma`)
+            messages.push(`Gave karama to ${increment}. ${increment} now has ${karma.karma} karma`)
         }
         for (const decrement of decrements){
             let karma = await this._repository.getKarma(decrement);
             karma.karma--;
             await this._repository.setKarma(decrement, karma);
-            messages.push(`${decrement} is now at ${karma.karma} karma`)
+            messages.push(`Took karama from ${decrement}. ${decrement} now has ${karma.karma} karma`)
         }
         return Promise.resolve({
             messages
