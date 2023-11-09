@@ -1,0 +1,3 @@
+type KarmaResponse = {
+    karma: number 
+}
