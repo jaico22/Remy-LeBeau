@@ -14,7 +14,7 @@ class KarmaParser {
                 const matchWithoutDelimiter = match.replace(this._delimiter, "");
                 const strippedString =  matchWithoutDelimiter.replace(/[()]/g, "");
                 return strippedString;
-            });
+            }).filter(matches => matches && matches !== "");
         } 
         return result;  
     }
