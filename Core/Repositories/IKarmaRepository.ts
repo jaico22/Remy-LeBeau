@@ -1,4 +1,4 @@
-import { KarmaBlob } from "./Models/KarmaBlob";
+import { KarmaBlob } from "../Models/KarmaBlob";
 
 export interface IKarmaRepository {
     getKarma: (word: string) => Promise<KarmaBlob>;

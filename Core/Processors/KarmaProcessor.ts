@@ -1,10 +1,12 @@
-import { IKarmaRepository } from "./IKarmaRepository";
-import JsonKarmaRepositry from "./JsonKarmaRepository";
-import KarmaParser from "./KarmaParser";
-import { KarmaProcessorResponse } from "./Models/KarmaProcessorResponse";
-import S3KarmaRepository from "./S3KarmaRepository";
+import { IKarmaRepository } from "../Repositories/IKarmaRepository";
+import { IMessageProcessor } from "./IMessageProcessor";
+import KarmaParser from "../Helpers/KarmaParser";
+import { MessageProcessorResponse } from "../Models/MessageProcessorResponse";
+import { User } from "../Models/User";
+import S3KarmaRepository from "../Repositories/S3KarmaRepository";
+import { Help } from "../Models/Help";
 
-class KarmaProcessor {
+class KarmaProcessor implements IMessageProcessor {
     private readonly _incrementParser : KarmaParser;
     private readonly _decrementParser : KarmaParser;
     private readonly _repository : IKarmaRepository;
@@ -13,8 +15,15 @@ class KarmaProcessor {
         this._decrementParser = new KarmaParser("--");
         this._repository = S3KarmaRepository;
     }
+    
+    helpDocument = {
+        name: "Add or Remove Karma",
+        description: "Adds or Removes karma from something",
+        pattern:  "{0}++ or {0}--",
+        example: "poop++"
+    } as Help
 
-    processMessageAsync = async (message: string) : Promise<KarmaProcessorResponse> => {
+    processMessageAsync = async (message: string, _user: User) : Promise<MessageProcessorResponse> => {
         const increments = this._incrementParser.parseKarma(message);
         const decrements = this._decrementParser.parseKarma(message);
         console.log(`Increments: ${increments.join(', ')}`)
@@ -34,7 +43,7 @@ class KarmaProcessor {
         }
         return Promise.resolve({
             messages
-        } as KarmaProcessorResponse);
+        });
     }
 }
 

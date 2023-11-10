@@ -1,16 +1,28 @@
-import KarmaParser from "../Core/KarmaParser";
-import KarmaProcessor from "../Core/KarmaProcessor";
-import { SlackPublisher } from "../Core/SlackPublisher";
+import AliasProcessor from "../Core/Processors/AliasProcessor";
+import { IMessageProcessor } from "../Core/Processors/IMessageProcessor";
+import KarmaProcessor from "../Core/Processors/KarmaProcessor";
+import { User } from "../Core/Models/User";
+import { SlackPublisher } from "../Core/Publishers/SlackPublisher";
 import { ISlackEventHandler } from "./ISlackEventHandler";
 import { SlackEvent } from "./Models/SlackEvent";
 import { SlackMessageEvent } from "./Models/SlackMessageEvent";
 import { SlackResponse } from "./Models/SlackResponse";
+import HelpProcessor from "../Core/Processors/HelpProcessor";
+import GetKarmaProcessor from "../Core/Processors/GetKarmaProcessor";
 
 class MessageEventHandler implements ISlackEventHandler<any>{
-    private readonly _karmaProcessor : KarmaProcessor;
     private readonly _slackPublisher : SlackPublisher;
+    private readonly _messageProcessors : IMessageProcessor[];
     constructor() {
-        this._karmaProcessor = new KarmaProcessor();
+        this._messageProcessors = [
+            new KarmaProcessor(),
+            new AliasProcessor(),
+            new GetKarmaProcessor()
+        ]
+
+        // Append help processor last and sperately so it has knowledge of existing registered processors
+        this._messageProcessors.push(new HelpProcessor(this._messageProcessors.map(mp => mp.helpDocument)));
+
         this._slackPublisher = new SlackPublisher();
     }
     type = "message";
@@ -19,6 +31,10 @@ class MessageEventHandler implements ISlackEventHandler<any>{
             throw "Event cannot be null";
         }
         const messageEvent = request.event as SlackMessageEvent;
+        const user = {
+            userId: messageEvent.user,
+            platform: "slack"
+        } as User;
         if (messageEvent.bot_id){
             console.log("ignoring")
             return Promise.resolve({
@@ -26,9 +42,14 @@ class MessageEventHandler implements ISlackEventHandler<any>{
             } as SlackResponse<never>);
         }
         console.log(`Received message from user ${messageEvent.user}: "${messageEvent.text}"`);
-        var response = await this._karmaProcessor.processMessageAsync(messageEvent.text);
-        console.log(`Response from processor: ${response.messages.join(",")}`)
-        this._slackPublisher.sendMessages(messageEvent.channel, response.messages);
+        var responses : string[] = [];
+        for (const processor of this._messageProcessors)
+        {
+            const newResponses = await processor.processMessageAsync(messageEvent.text, user);
+            responses = responses.concat(newResponses.messages);
+        }
+        console.log(`Response from processor: ${responses.join(",")}`)
+        this._slackPublisher.sendMessages(messageEvent.channel, responses);
         return Promise.resolve({
             statusCode: 200,
         } as SlackResponse<never>);

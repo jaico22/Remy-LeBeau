@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { IKarmaRepository } from "./IKarmaRepository";
-import { KarmaBlob } from "./Models/KarmaBlob";
-import { S3Client, ListBucketsCommand, PutObjectCommand, GetObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { KarmaBlob } from "../Models/KarmaBlob";
+import { S3Client, PutObjectCommand, GetObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 
 class S3KarmaRepository implements IKarmaRepository {
     private _client: S3Client;
@@ -13,7 +13,9 @@ class S3KarmaRepository implements IKarmaRepository {
     }
 
     _hashWord = (word: string) => {
-        return createHash('sha256').update(word).digest('hex');
+        var hash = `${process.env.ENV}${createHash('sha256').update(word.toLocaleLowerCase()).digest('hex')}`;
+        console.log(`Key: ${hash}`);
+        return hash;
     }
     
     getKarma = async (word: string) => {
@@ -35,7 +37,6 @@ class S3KarmaRepository implements IKarmaRepository {
             }
         }
         catch (ex) {
-            console.error(ex);
             return {
                 karma: 0
             };
