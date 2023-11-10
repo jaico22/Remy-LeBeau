@@ -5,4 +5,5 @@ export interface SlackMessageEvent extends IEvent {
     text: string;
     channel: string;
     bot_id?: string;
+    subtype: string;
 }

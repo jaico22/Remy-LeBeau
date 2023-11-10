@@ -49,6 +49,15 @@ class MessageEventHandler implements ISlackEventHandler<any>{
 
         console.log(`Received message from user ${messageEvent.user}: "${messageEvent.text}"`);
         
+        // Ignore blank messages and edits
+        if (messageEvent.subtype === "message_changed" || !messageEvent.text)
+        {
+            console.log("Invalid message or edit received; Ignroing")
+            return Promise.resolve({
+                statusCode: 200
+            } as SlackResponse<never>)
+        }
+
         var responses : string[] = [];
 
         for (const processor of this._messageProcessors)
