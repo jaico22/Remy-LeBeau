@@ -1,5 +1,5 @@
-import { SlackResponse } from "./Models/SlackResponse";
-import { SlackEvent } from "./Models/SlackEvent";
+import { SlackResponse } from "../Models/SlackResponse";
+import { SlackEvent } from "../Models/SlackEvent";
 
 export interface ISlackEventHandler<T> {
     type: string;

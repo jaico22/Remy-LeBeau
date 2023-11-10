@@ -1,7 +1,6 @@
 import { IKarmaRepository } from "../Repositories/IKarmaRepository";
 import { IMessageProcessor } from "./IMessageProcessor";
 import { KarmaBlob } from "../Models/KarmaBlob";
-import { MessageProcessorResponse } from "../Models/MessageProcessorResponse";
 import { User } from "../Models/User";
 import S3KarmaRepository from "../Repositories/S3KarmaRepository";
 import { Help } from "../Models/Help";
@@ -20,25 +19,36 @@ class AliasProcessor implements IMessageProcessor {
     } as Help
     
     processMessageAsync = async (message: string, user: User) => {
-        const userId = this.buildUserIdentifier(user);
-        const userKarma = await this._karmaRepository.getKarma(userId);
-        const alias = this.extractAlias(message.toLocaleLowerCase());
         let messages : string[] = [];
+        const alias = this.extractAlias(message.toLocaleLowerCase());
         if (alias)
         {
-            if (userKarma.aliases && userKarma.aliases.length > 0) {
-                messages.push(`Don't lie to me ${userKarma.aliases.join(" or should I say ")}`)
+            const userId = this.buildUserIdentifier(user);
+            const userKarma = await this._karmaRepository.getKarma(userId);
+
+            const userAliases = user.platform === "slack"
+                ? userKarma.slackAliases
+                : userKarma.discordAliases;
+
+            // Users cannot have multiple aliases
+            if (userAliases && userAliases.length > 0) {
+                messages.push(`You can't have more than one alias.`)
             }
             else {
                 const aliasKarma = await this._karmaRepository.getKarma(userId);
 
-                if (aliasKarma.aliases && aliasKarma.aliases?.length > 0){
-                    messages.push(`Nice try. That alias already belongs to someone else.`)
+                // Values cannot have multiple aliases
+                const aliasAliases = user.platform === "slack"
+                    ? aliasKarma.slackAliases
+                    : aliasKarma.discordAliases
+                if (aliasAliases && aliasAliases?.length > 0){
+                    messages.push(`${alias} is already aliased to someone else`)
                 }
 
-                this.appendAlias(aliasKarma, userId);
-                this.appendAlias(userKarma, alias);
-
+                // Track alias updates on both the target and the user to prevent having to query
+                // which is currently not that feasible with a blob approach to data storage
+                this.appendAlias(aliasKarma, userId, user.platform);
+                this.appendAlias(userKarma, alias, user.platform);
                 await this._karmaRepository.setKarma(userId, userKarma);
                 await this._karmaRepository.setKarma(alias, aliasKarma);
                 
@@ -51,11 +61,20 @@ class AliasProcessor implements IMessageProcessor {
         } 
     }
 
-    private appendAlias(aliasKarma: KarmaBlob, alias: string) {
-        if (!aliasKarma.aliases) {
-            aliasKarma.aliases = [];
+    private appendAlias(aliasKarma: KarmaBlob, alias: string, platform: "slack" | "discord") {
+        if (platform === "discord")
+        {
+            if (!aliasKarma.discordAliases) {
+                aliasKarma.discordAliases = [];
+            }
+            aliasKarma.discordAliases.push(alias);
         }
-        aliasKarma.aliases.push(alias);
+        else {
+            if (!aliasKarma.slackAliases) {
+                aliasKarma.slackAliases = [];
+            }
+            aliasKarma.slackAliases.push(alias);         
+        }
     }
 
     private extractAlias(message: string): string | null {

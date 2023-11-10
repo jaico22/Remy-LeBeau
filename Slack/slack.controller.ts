@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import { ParsedQs } from "qs";
 import { IController, Method } from "../Core/IController";
 import { SlackEvent } from "./Models/SlackEvent";
-import { ISlackEventHandler } from "./ISlackEventHandler";
-import VerificationEventHandler from "./VerificationEventHandler";
+import { ISlackEventHandler } from "./Handlers/ISlackEventHandler";
+import VerificationEventHandler from "./Handlers/VerificationEventHandler";
 import { SlackResponse } from "./Models/SlackResponse";
-import MessageEventHandler from "./MessageEventHandler";
+import MessageEventHandler from "./Handlers/MessageEventHandler";
 
 class SlackController implements IController {
 

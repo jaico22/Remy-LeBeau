@@ -1,4 +1,5 @@
 export type KarmaBlob = {
     karma: number;
-    aliases?: string[];
+    slackAliases?: string[];
+    discordAliases?: string[];
 }
