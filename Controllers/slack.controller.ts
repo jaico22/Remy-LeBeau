@@ -16,19 +16,25 @@ class SlackController implements IController {
     Endpoints = [
         {
             Handler: async (req: Request<SlackEvent>, res: Response<number, Record<string, any>>) => {
-                console.log('received');
-                console.log(req.body);
+                console.log('Slack Event Received');
                 const slackEvent = req.body as SlackEvent;
                 let slackResponse : SlackResponse<any> | null = null;
+                console.log(req.body)
                 for (const handler of this._handlers) {
                     if (slackEvent.type === handler.type || (slackEvent.event && slackEvent.event.type === handler.type)){
+                        if (handler.type !== "url_verification"){
+                            res.status(200);
+                            res.send();
+                        }
                         slackResponse = await handler.handleEventAsync(slackEvent);
+                        if (handler.type === "url_verification"){
+                            res.status(slackResponse.statusCode);
+                            res.send(slackResponse.body);
+                        }
                     }
                 };
-                if (slackResponse){
-                    res.status(slackResponse.statusCode);
-                    res.send(slackResponse.body);
-                }
+                res.status(400);
+                res.send();
             },
             Path: "/slack/event",
             Method: Method.POST

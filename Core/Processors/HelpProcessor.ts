@@ -15,6 +15,8 @@ class HelpProcessor implements IMessageProcessor {
         pattern: "Remmy help",
     } as Help;
 
+    patterns = ["Remy Help", "Remy, how do I use you?"]
+
     processMessageAsync = (message: string, user: User) => {
         let messages : string[] = [];
         if (message.toLocaleLowerCase() === "remy help") 

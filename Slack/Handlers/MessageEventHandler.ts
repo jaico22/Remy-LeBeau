@@ -9,27 +9,22 @@ import { SlackMessageEvent } from "../Models/SlackMessageEvent";
 import { SlackResponse } from "../Models/SlackResponse";
 import HelpProcessor from "../../Core/Processors/HelpProcessor";
 import GetKarmaProcessor from "../../Core/Processors/GetKarmaProcessor";
+import MessageRouter from "../../Core/AI/MessageRouter";
 
 class MessageEventHandler implements ISlackEventHandler<any>{
     private readonly _slackPublisher : SlackPublisher;
-    private readonly _messageProcessors : IMessageProcessor[];
 
     constructor() {
-        this._messageProcessors = [
-            new KarmaProcessor(),
-            new AliasProcessor(),
-            new GetKarmaProcessor()
-        ]
-
-        // Append help processor last and sperately so it has knowledge of existing registered processors
-        this._messageProcessors.push(new HelpProcessor(this._messageProcessors.map(mp => mp.helpDocument)));
-
         this._slackPublisher = new SlackPublisher();
     }
 
     type = "message";
 
     handleEventAsync = async (request: SlackEvent) => {
+        if (!MessageRouter.isInitialized){
+            console.log("initalizing message router")
+            await MessageRouter.init();
+        }
         if (!request.event){
             throw "Event cannot be null";
         }
@@ -58,13 +53,8 @@ class MessageEventHandler implements ISlackEventHandler<any>{
             } as SlackResponse<never>)
         }
 
-        var responses : string[] = [];
+        const responses = await MessageRouter.routeMessage(messageEvent.text, user);
 
-        for (const processor of this._messageProcessors)
-        {
-            const newResponses = await processor.processMessageAsync(messageEvent.text, user);
-            responses = responses.concat(newResponses.messages);
-        }
         console.log(`Response from processor: ${responses.join(",")}`)
 
         this._slackPublisher.sendMessages(messageEvent.channel, responses);

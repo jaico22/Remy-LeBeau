@@ -4,5 +4,6 @@ import { User } from "../Models/User";
 
 export interface IMessageProcessor {
     helpDocument: Help;
+    patterns: string[];
     processMessageAsync: (message: string, user: User) => Promise<MessageProcessorResponse>
 }
