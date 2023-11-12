@@ -22,7 +22,7 @@ class GetKarmaProcessor implements IMessageProcessor {
         example: "karma poop"
     } as Help
 
-    patterns = ["how much karma does {0} have?", "karma {0}", "Remy, karma {0}"]
+    patterns = ["how much karma does {0} have?", "karma {0}"]
 
     minimumScore = 0.90;
 
