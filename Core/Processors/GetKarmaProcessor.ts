@@ -9,6 +9,7 @@ import { IMessageProcessor } from "./IMessageProcessor";
 class GetKarmaProcessor implements IMessageProcessor {
     private readonly _repository : IKarmaRepository;
     private readonly _aiParser : MessageParser;
+
     constructor() {
         this._repository = S3KarmaRepository;
         this._aiParser = new MessageParser(this.patterns, "{0}")
@@ -22,6 +23,8 @@ class GetKarmaProcessor implements IMessageProcessor {
     } as Help
 
     patterns = ["how much karma does {0} have?", "karma {0}", "Remy, karma {0}"]
+
+    minimumScore = 0.90;
 
     processMessageAsync = async (message: string, user: User) => {
         let messages : string[] = [];

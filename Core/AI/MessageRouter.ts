@@ -61,7 +61,8 @@ class MessageRouter {
                 console.log(`Calculating dot product"`)
                 try{
                     const dotProduct = dot(embeddings.embeddings, mapping.embeddings);
-                    if (dotProduct > maxDotProduct)
+                    if (dotProduct >= (mapping.processor.minimumScore ?? 0.0) 
+                        && dotProduct > maxDotProduct)
                     {
                         maxDotProduct = dotProduct;
                         processor = mapping.processor
