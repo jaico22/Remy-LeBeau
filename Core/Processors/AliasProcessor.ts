@@ -4,11 +4,15 @@ import { KarmaBlob } from "../Models/KarmaBlob";
 import { User } from "../Models/User";
 import S3KarmaRepository from "../Repositories/S3KarmaRepository";
 import { Help } from "../Models/Help";
+import MessageParser from "../AI/MessageParser";
 
 class AliasProcessor implements IMessageProcessor {
     private readonly _karmaRepository : IKarmaRepository;
+    private _aiParser: MessageParser;
     constructor() {
         this._karmaRepository = S3KarmaRepository;
+        this._aiParser = new MessageParser(this.patterns, "{0}");
+
     }
 
     helpDocument = {
@@ -17,10 +21,18 @@ class AliasProcessor implements IMessageProcessor {
         pattern: "Hi Remy I'm {0}",
         example: "Hi Remy I'm Poop"
     } as Help
+
+    patterns = ["Hi Remy I'm {0}", "Remy, assign the alias {0} to me.", "Hey Remy, I'm {0}!", "Remy, Alias {0}."];
     
     processMessageAsync = async (message: string, user: User) => {
+        console.log("Attempting to set alias.")
         let messages : string[] = [];
-        const alias = this.extractAlias(message.toLocaleLowerCase());
+        let alias = this.extractAlias(message.toLocaleLowerCase());
+        if (!alias){
+            console.log("Parsing using AI");
+            alias = await this._aiParser.parseMessage(message);
+            console.log(`Parser output: ${0}`)
+        }
         if (alias)
         {
             const userId = this.buildUserIdentifier(user);
