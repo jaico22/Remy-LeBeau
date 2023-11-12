@@ -41,7 +41,7 @@ class MessageRouter {
         const processorResponse = await this.getProcessorUsingEmbeddingsAsync(message);
         if (processorResponse.isSuccess && processorResponse.processor){
             console.log("Using AI")
-            const response = await processorResponse.processor.processMessageAsync(message, user);
+            const response = await processorResponse.processor.processMessageAsync(message, user, true);
             return response.messages;
         }
         else {
@@ -90,7 +90,7 @@ class MessageRouter {
         let responses : string[] = [];
         for (const processor of this._processors)
         {
-            const newResponses = await processor.processMessageAsync(message, user);
+            const newResponses = await processor.processMessageAsync(message, user, false);
             responses = responses.concat(newResponses.messages);
         }
         return responses;

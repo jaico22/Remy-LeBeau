@@ -36,14 +36,15 @@ class KarmaProcessor implements IMessageProcessor {
     } as Help
 
 
-    processMessageAsync = async (message: string, _user: User) : Promise<MessageProcessorResponse> => {
+    processMessageAsync = async (message: string, _user: User, aiEnabled: boolean) : Promise<MessageProcessorResponse> => {
         let increments : string[] = [];
         let decrements  : string[] = [];
         increments = this._incrementParser.parseKarma(message);
         decrements = this._decrementParser.parseKarma(message);
         try {
             if ((!increments || increments.length === 0 )
-                && (!decrements || decrements.length === 0))
+                && (!decrements || decrements.length === 0)
+                && aiEnabled)
             console.log("Using AI")
             const resp = await this._aiParser.parseMessage(message);
             console.log(resp);

@@ -18,7 +18,7 @@ class GeneralChatProcessor implements IMessageProcessor {
     } as Help;
     patterns = ["Hey Remy!", "Good Morning Remy!", "Good Afternoon Remy"];
 
-    async processMessageAsync(message: string, user: User) : Promise<MessageProcessorResponse> {
+    async processMessageAsync(message: string, user: User, aiEnabled: boolean) : Promise<MessageProcessorResponse> {
         let responses : string[] = [];
         try {
 

@@ -26,14 +26,14 @@ class GetKarmaProcessor implements IMessageProcessor {
 
     minimumScore = 0.90;
 
-    processMessageAsync = async (message: string, user: User) => {
+    processMessageAsync = async (message: string, user: User, aiEnabled: boolean) => {
         let messages : string[] = [];
 
         let request : string | null = null;
         if (message.startsWith("karma")){
             request = this.extractRequest(message);
         }
-        if (!request){
+        if (!request && aiEnabled){
             request = await this._aiParser.parseMessage(message);
         }
         if (request) {

@@ -6,5 +6,5 @@ export interface IMessageProcessor {
     helpDocument: Help;
     patterns: string[];
     minimumScore?: number;
-    processMessageAsync: (message: string, user: User) => Promise<MessageProcessorResponse>
+    processMessageAsync: (message: string, user: User, aiEnabled: boolean) => Promise<MessageProcessorResponse>
 }

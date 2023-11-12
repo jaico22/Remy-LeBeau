@@ -23,7 +23,7 @@ class AppMentionEventHandler implements ISlackEventHandler<any> {
             platform: "slack"
         } as User;
         // do not await, just let it run in the backtround
-        this._messageProcessor.processMessageAsync(messageEvent.text, user).then((resp) => {
+        this._messageProcessor.processMessageAsync(messageEvent.text, user, true).then((resp) => {
             this._slackPublisher.sendMessages(messageEvent.channel, resp.messages)
         });
         return Promise.resolve({

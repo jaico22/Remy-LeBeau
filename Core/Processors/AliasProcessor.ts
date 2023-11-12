@@ -22,16 +22,19 @@ class AliasProcessor implements IMessageProcessor {
         example: "Hi Remy I'm Poop"
     } as Help
 
-    patterns = ["Hi Remy I'm {0}", "Remy, assign the alias {0} to me.", "Hey Remy, I'm {0}!", "Remy, Alias {0}."];
+    patterns = ["Hi Remy I'm {0}",
+         "Remy, assign the alias {0} to me.", 
+         "Hey Remy, I'm {0}!", 
+         "Remy, Alias {0}."];
     
-    processMessageAsync = async (message: string, user: User) => {
+    processMessageAsync = async (message: string, user: User, aiEnabled: boolean) => {
         console.log("Attempting to set alias.")
         let messages : string[] = [];
         let alias = this.extractAlias(message.toLocaleLowerCase());
-        if (!alias){
+        if (!alias && aiEnabled){
             console.log("Parsing using AI");
             alias = await this._aiParser.parseMessage(message);
-            console.log(`Parser output: ${0}`)
+            console.log(`Parser output: ${alias}`)
         }
         if (alias)
         {
