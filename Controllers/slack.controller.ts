@@ -5,12 +5,14 @@ import { ISlackEventHandler } from "../Slack/Handlers/ISlackEventHandler";
 import VerificationEventHandler from "../Slack/Handlers/VerificationEventHandler";
 import { SlackResponse } from "../Slack/Models/SlackResponse";
 import MessageEventHandler from "../Slack/Handlers/MessageEventHandler";
+import AppMentionEventHandler from "../Slack/Handlers/AppMentionEventHander";
 
 class SlackController implements IController {
 
     constructor() {
         this._handlers.push(new VerificationEventHandler())
         this._handlers.push(new MessageEventHandler())
+        this._handlers.push(new AppMentionEventHandler())
     }
 
     Endpoints = [

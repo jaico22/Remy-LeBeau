@@ -20,8 +20,7 @@ class MessageRouter {
         this._processors = [
             new KarmaProcessor(),
             new AliasProcessor(),
-            new GetKarmaProcessor(),
-            new GeneralChatProcessor()
+            new GetKarmaProcessor()
         ]
         this._embeddingsProcessor = new EmbeddingsProcessor();
         this.isInitialized = false;
@@ -74,10 +73,6 @@ class MessageRouter {
                 }
             }
 
-            // User general chat if no good match is found
-            if (maxDotProduct < 0.8){
-                processor = new GeneralChatProcessor();
-            }
             return {
                 isSuccess: maxDotProduct > 0.8,
                 processor

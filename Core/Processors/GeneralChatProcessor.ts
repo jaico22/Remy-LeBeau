@@ -20,7 +20,7 @@ class GeneralChatProcessor implements IMessageProcessor {
 
     async processMessageAsync(message: string, user: User) : Promise<MessageProcessorResponse> {
         let responses : string[] = [];
-        try{
+        try {
 
         console.log("Sending a response request to chatgpt")
         const response = await this._chatProcessor.generateResponse({
