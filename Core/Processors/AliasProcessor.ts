@@ -15,6 +15,8 @@ class AliasProcessor implements IMessageProcessor {
 
     }
 
+    minimumScore = 0.95;
+
     helpDocument = {
         name: "Alias User",
         description: "Sets up an alias for a user",

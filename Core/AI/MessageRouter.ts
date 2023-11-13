@@ -1,8 +1,6 @@
 import { User } from "../Models/User";
 import AliasProcessor from "../Processors/AliasProcessor";
-import GeneralChatProcessor from "../Processors/GeneralChatProcessor";
 import GetKarmaProcessor from "../Processors/GetKarmaProcessor";
-import HelpProcessor from "../Processors/HelpProcessor";
 import { IMessageProcessor } from "../Processors/IMessageProcessor";
 import KarmaProcessor from "../Processors/KarmaProcessor";
 import EmbeddingsProcessor from "./Embeddings/EmbeddingsProcessor";

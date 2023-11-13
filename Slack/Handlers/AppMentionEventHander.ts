@@ -8,6 +8,7 @@ import { ISlackEventHandler } from "./ISlackEventHandler";
 
 class AppMentionEventHandler implements ISlackEventHandler<any> {
     type = "app_mention";
+    
     private readonly _messageProcessor : GeneralChatProcessor;
     private readonly _slackPublisher : SlackPublisher;
 
