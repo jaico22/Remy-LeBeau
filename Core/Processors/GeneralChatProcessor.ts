@@ -25,7 +25,7 @@ class GeneralChatProcessor implements IMessageProcessor {
         console.log("Sending a response request to chatgpt")
         const response = await this._chatProcessor.generateResponse({
             systemPrompts: ["You are Remy LeBeau. Please respond as Remy."],
-            userPrompts: [message],
+            userPrompts: [{message}],
             temperature: 1.2
         });
         console.log(response);

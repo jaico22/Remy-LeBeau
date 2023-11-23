@@ -65,7 +65,7 @@ class MessageRouter {
                         maxDotProduct = dotProduct;
                         processor = mapping.processor
                     }
-                    console.log(`${mapping.processor.helpDocument.name}: ${dotProduct}`)
+                    console.log(`${mapping.processor.helpDocument?.name}: ${dotProduct}`)
                 }
                 catch(ex) {
                     console.error(ex)

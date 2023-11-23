@@ -1,5 +1,7 @@
+import { ChatMessage } from "./ChatMessage"
+
 export type ChatProcessorRequest = {
     systemPrompts?: string[],
-    userPrompts: string[],
+    userPrompts: ChatMessage[],
     temperature?: number
 }

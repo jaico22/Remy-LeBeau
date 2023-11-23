@@ -1,5 +1,7 @@
 import { User } from "../../Core/Models/User";
+import GameProcessor from "../../Core/Processors/GameProcessor";
 import GeneralChatProcessor from "../../Core/Processors/GeneralChatProcessor";
+import { IMessageProcessor } from "../../Core/Processors/IMessageProcessor";
 import { SlackPublisher } from "../../Core/Publishers/SlackPublisher";
 import { SlackEvent } from "../Models/SlackEvent";
 import { SlackMessageEvent } from "../Models/SlackMessageEvent";
@@ -9,11 +11,11 @@ import { ISlackEventHandler } from "./ISlackEventHandler";
 class AppMentionEventHandler implements ISlackEventHandler<any> {
     type = "app_mention";
     
-    private readonly _messageProcessor : GeneralChatProcessor;
+    private readonly _messageProcessor : IMessageProcessor;
     private readonly _slackPublisher : SlackPublisher;
 
     constructor() {
-        this._messageProcessor = new GeneralChatProcessor();
+        this._messageProcessor = new GameProcessor();
         this._slackPublisher = new SlackPublisher();
     }
 

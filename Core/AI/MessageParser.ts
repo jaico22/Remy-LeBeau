@@ -20,7 +20,7 @@ class MessageParser {
                 `You may only respond with the format ${this._responseFormat} but you must remove all parenthesis from the response.`,
                 `You may not return anything besides messages with that format.`
             ],
-            userPrompts: [message],
+            userPrompts: [{message}],
             temperature: 0.01
         }
         return await this._chatProcessor.generateResponse(request);

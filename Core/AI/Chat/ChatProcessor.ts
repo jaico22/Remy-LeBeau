@@ -14,9 +14,9 @@ class ChatProcessor {
                 role: "system",
                 content: p
             }) as ChatCompletionMessageParam)
-            .concat(request.userPrompts.map(p => ({
-                role: "user",
-                content: p
+            .concat(request.userPrompts.sort(p => p.order ?? 0).map(p => ({
+                role: p.role ?? "user",
+                content: p.message
             } as ChatCompletionMessageParam)));
 
         const response = await this._client.chat.completions.create({

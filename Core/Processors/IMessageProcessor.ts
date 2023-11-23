@@ -3,7 +3,7 @@ import { MessageProcessorResponse } from "../Models/MessageProcessorResponse";
 import { User } from "../Models/User";
 
 export interface IMessageProcessor {
-    helpDocument: Help;
+    helpDocument?: Help;
     patterns: string[];
     minimumScore?: number;
     processMessageAsync: (message: string, user: User, aiEnabled: boolean) => Promise<MessageProcessorResponse>
